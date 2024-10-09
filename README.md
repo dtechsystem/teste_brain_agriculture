@@ -134,9 +134,7 @@
 </ul>
 <h3>Gráficos Utilizados:</h3>
 <ul>
-   <li><strong>Gráfico de Pizza</strong> para representar a distribuição de culturas.</li>
-   <li><strong>Gráfico de Barras</strong> para o uso do solo.</li>
-   <li><strong>Gráfico de Linhas</strong> para o histórico de produções (opcional, pode ser implementado conforme necessidade).</li>
+   <li><strong>Gráfico de Pizza</strong> para representar a distribuição de culturas, uso do solo e fazendas por estado.</li>
 </ul>
 <h2>🧪 Testes Unitários</h2>
 <p>Para garantir a estabilidade da aplicação, implementamos testes unitários abrangentes. Os testes cobrem:</p>
