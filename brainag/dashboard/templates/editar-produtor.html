@@ -1,0 +1,289 @@
+{% extends 'menu.html' %}
+{% load static %}
+
+
+{% block content %}
+<div class="right_col" role="main" style="height: 1000px;">
+    <div class="">
+        <div class="page-title">
+            <div class="title_left">
+                <h3>Editar Informações de {{produtor.produtor}}</h3>
+            </div>
+
+      
+        </div>
+        <div class="clearfix" ></div>
+        <div class="row" >
+           
+            <div class="col-md-12 col-sm-12 ">
+                <div class="x_panel">
+                    <div class="x_title">
+                        <h2>Informações do Produtor</small></h2>
+           
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+                        <br />
+                        <form id="formProdutorEdit">
+                        <div class="col-md-6 col-sm-6  form-group has-feedback">
+                            <input type="text" value="{{produtor.cpfcnpj}}" class="form-control has-feedback-left" id="cpfCnpj" placeholder="CPF/CNPJ">
+                            <span class="fa fa-credit-card form-control-feedback left" aria-hidden="true"></span>
+                            <div class="invalid-feedback">
+                                CPF ou CNPJ inválido.
+                              </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6  form-group has-feedback">
+                            <input type="text" value="{{produtor.produtor}}" class="form-control has-feedback-left" id="produtor_edit" placeholder="Produtor">
+                            <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+                        </div>
+
+                        <div class="col-md-12 col-sm-6  form-group has-feedback">
+                            <button style="width: 100%;" type="button" onclick="alterarProdutor('{{ produtor.id }}')" class="btn btn-success">Alterar</button>
+                        </div>
+                    </form>
+
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-12 col-sm-12 ">
+                <div class="x_panel">
+                    <div class="x_title d-flex justify-content-between align-items-center">
+                        <h2>Fazendas</h2>
+                        <button class="btn btn-primary ml-auto" data-toggle="modal" data-target=".modalAddFazenda">
+                            <i class="fa fa-plus"></i> Adicionar Fazenda
+                        </button>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+            
+                        <!-- start accordion -->
+                        <div class="accordion" id="accordion" role="tablist" aria-multiselectable="true">
+                            {% for fazenda in fazendas %}
+                            <div class="panel" data-id="{{ fazenda.id }}">
+                                <a class="panel-heading collapsed d-flex justify-content-between align-items-center" role="tab" id="headingOne" data-toggle="collapse" data-parent="#accordion" href="#a{{fazenda.id}}" aria-expanded="false" aria-controls="collapseOne">
+                                    <h4 class="panel-title">{{fazenda.fazenda}}</h4>
+                                    <i class="fa fa-trash" style="color:red; cursor:pointer; font-size: 20px;" title="Apagar" onclick="deletarFazenda('{{ fazenda.id }}'); event.stopPropagation();"></i>
+                                </a>
+                                <div id="a{{fazenda.id}}" class="panel-collapse in collapse" role="tabpanel" aria-labelledby="headingOne" style="">
+                                    <div class="panel-body">
+            
+                                        <div class="col-md-3 col-sm-6 form-group has-feedback">
+                                            <b><label for="cpfCnpj" class="form-label">Nome da Fazenda</label></b>
+                                            <input type="text" value="{{fazenda.fazenda}}" class="form-control" id="nomeFazenda" placeholder="Nome da Fazenda">
+                                        </div>
+                                        <div class="col-md-3 col-sm-6 form-group has-feedback">
+                                            <b><label for="cpfCnpj" class="form-label">Área Total em (Hectares)</label></b>
+                                            <input type="number" value="{{fazenda.area_total}}" class="form-control" id="areaTotal" placeholder="Área Total">
+                                        </div>
+            
+                                        <div class="col-md-3 col-sm-6 form-group has-feedback">
+                                            <b><label for="cpfCnpj" class="form-label">Área Agricultável (Hectares)</label></b>
+                                            <input type="number" value="{{fazenda.area_agricultavel}}" class="form-control" id="areaAgricultavel" placeholder="Área Total">
+                                        </div>
+            
+                                        <div class="col-md-3 col-sm-6 form-group has-feedback">
+                                            <b><label for="cpfCnpj" class="form-label">Área de Vegetação (Hectares)</label></b>
+                                            <input type="number" value="{{fazenda.area_vegetacao}}" class="form-control" id="areaVegetacao" placeholder="Área Total">
+                                        </div>
+            
+                                        <div class="col-md-6 col-sm-6 form-group has-feedback">
+                                            <button style="width: 100%;" type="button" onclick="adicionarCultura('{{fazenda.id}}')" class="btn btn-warning">Add Culturas</button>
+                                        </div>
+                                        <div class="col-md-6 col-sm-6 form-group has-feedback">
+                                            <button style="width: 100%;" type="button" onclick="alterarFazenda('{{ fazenda.id }}')" class="btn btn-success">Alterar Fazenda</button>
+                                        </div>
+                                        <table class="table table-striped jambo_table bulk_action">
+                                            <thead>
+                                                <tr class="headings">
+                                                    <th class="column-title">Culturas Plantadas</th>
+                                                    <th class="column-title">Ação</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for cultura in culturas %}
+                                                {% if cultura.fazenda.id == fazenda.id %}
+                                                <tr class="even pointer" data-cultura-id="{{ cultura.id }}">
+                                                    <td class=" ">{{cultura.cultura}}</td>
+                                                    <td class=" ">
+                                                        <a href="#" class="btn btn-danger" onclick="deletarCultura('{{ cultura.id }}'); event.stopPropagation();"><i class="fa fa-trash"></i></a>
+                                                    </td>
+                                                </tr>
+                                                {% endif %}
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <!-- end of accordion -->
+            
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- /page content -->
+
+<!-- /footer content -->
+</div>
+</div>
+
+<div class="modal fade modalAddFazenda" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <input style="display: none;"  id="produtorId" value="{{ produtor.id }}">
+          <div class="modal-header">
+            <h4 class="modal-title" id="myModalLabel">Cadastrar Fazenda</h4>
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form id="formProdutor">
+              <div class="row">
+  
+                <div class="col-md-12 col-sm-12 ">
+                  <div class="mb-3">
+                    <label for="nomeFazenda" class="form-label">Nome da Fazenda</label>
+                    <input type="text" class="form-control" id="nomeFazenda" placeholder="Digite o nome da fazenda" required>
+                  </div>
+                </div>
+  
+  
+              <div class="col-md-6 col-sm-12 ">
+                  <div class="mb-3">
+                    <label for="estado" class="form-label">Estado</label>
+                    <select style="width: 100%;" class="form-control select-2-modaladdfazenda" id="estado" name="estado" required>
+                      <option value="AC">Acre</option>
+                        <option value="AL">Alagoas</option>
+                        <option value="AP">Amapá</option>
+                        <option value="AM">Amazonas</option>
+                        <option value="BA">Bahia</option>
+                        <option value="CE">Ceará</option>
+                        <option value="DF">Distrito Federal</option>
+                        <option value="ES">Espírito Santo</option>
+                        <option value="GO">Goiás</option>
+                        <option value="MA">Maranhão</option>
+                        <option value="MT">Mato Grosso</option>
+                        <option value="MS">Mato Grosso do Sul</option>
+                        <option value="MG">Minas Gerais</option>
+                        <option value="PA">Pará</option>
+                        <option value="PB">Paraíba</option>
+                        <option value="PR">Paraná</option>
+                        <option value="PE">Pernambuco</option>
+                        <option value="PI">Piauí</option>
+                        <option value="RJ">Rio de Janeiro</option>
+                        <option value="RN">Rio Grande do Norte</option>
+                        <option value="RS">Rio Grande do Sul</option>
+                        <option value="RO">Rondônia</option>
+                        <option value="RR">Roraima</option>
+                        <option value="SC">Santa Catarina</option>
+                        <option value="SP">São Paulo</option>
+                        <option value="SE">Sergipe</option>
+                        <option value="TO">Tocantins</option>
+                      <!-- Adicionar outros estados conforme necessário -->
+                    </select>
+                  </div>
+              </div>    
+  
+              <div class="col-md-6 col-sm-12 ">
+                <div class="mb-3">
+                  <label for="cidade" class="form-label">Cidade</label>
+                  <select style="width: 100%;" class="form-control select-2-modaladdfazenda" id="cidade" name="cidade" required>
+                    <option selected disabled>Escolha a cidade</option>
+                    <!-- Adicionar outros estados conforme necessário -->
+                  </select>
+                </div>
+              </div>
+              
+              <div class="col-md-4 col-sm-12 ">
+                <div class="mb-3">
+                  <label for="areaTotal" class="form-label">Área total (hectares)</label>
+                  <input type="number" class="form-control" id="areaTotal" placeholder="Área total da fazenda" required>
+                </div>
+              </div>
+  
+              <div class="col-md-4 col-sm-12 ">
+                <div class="mb-3">
+                  <label for="areaAgricultavel" class="form-label">Área agricultável (hectares)</label>
+                  <input type="number" class="form-control" id="areaAgricultavel" placeholder="área agricultável" oninput="validarAreas()" required>
+                </div>
+              </div>
+  
+              <div class="col-md-4 col-sm-12 ">
+                <div class="mb-3">
+                  <label for="areaVegetacao" class="form-label">Área de vegetação (hectares)</label>
+                  <input type="number" class="form-control" id="areaVegetacao" placeholder="Área de vegetação" oninput="validarAreas()" required>
+                </div>
+              </div>
+  
+              <div class="col-md-12 col-sm-12 ">
+                <div class="mb-3">
+                  <label for="culturas" class="form-label">Culturas plantadas</label>
+                  <select required style="width: 100%;" class="form-control select-2-modaladdfazenda" name="culturas[]" multiple="multiple" id="culturas">
+                    <option  value="Soja">Soja</option>
+                    <option  value="Milho">Milho</option>
+                    <option value="Algodão">Algodão</option>
+                    <option value="Café">Café</option>
+                    <option value="Cana">Cana de Açúcar</option>
+                  </select>
+                </div>
+              </div>
+  
+              
+            
+          </div>
+        </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+            <button type="button" onclick="cadFazenda('{{produtor.id}}')" class="btn btn-primary">Cadastrar</button>
+          </div>
+        </form>
+        </div>
+      </div>
+  </div>
+
+  <div class="modal fade modaladdCultura" id="modaladdCultura" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+    
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <input style="display: none;"   id="produtorId" value="{{ produtor.id }}">
+          <div class="modal-header">
+            <h4 class="modal-title" id="myModalLabel">Adicionar Culturas a Fazenda</h4>
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
+            </button>
+          </div>
+          <div class="modal-body">
+          
+              <div class="row">
+    
+                <input style="display: none;" type="text" id="fazendaIdModal" value="">
+    
+    
+                <div class="col-md-12 col-sm-12 ">
+                    <div class="mb-3">
+                      <label for="culturas" class="form-label">Culturas plantadas</label>
+                      <select required style="width: 100%;" class="form-control js-example-basic-multiple" name="culturas[]" multiple="multiple" id="culturas_select">
+                      
+                      </select>
+                    </div>
+                  </div>
+             
+    
+              
+            
+          </div>
+        </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+            <button type="button" onclick="cadCulturas()" class="btn btn-primary">Cadastrar</button>
+          </div>
+    
+        </div>
+      </div>
+  </div>
+{% endblock %}

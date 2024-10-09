@@ -1,0 +1,164 @@
+<div class="modal-dialog modal-lg">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h4 class="modal-title" id="myModalLabel">{{produtor.produtor}}</h4>
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-6 col-sm-12  ">
+            <div class="x_panel">
+              <div class="x_title">
+                <h2>Relatório / Estado </h2>
+               
+                <div class="clearfix"></div>
+              </div>
+              <div class="x_content">
+                <canvas id="grafico_estado_user"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-sm-12  ">
+            <div class="x_panel">
+              <div class="x_title">
+                <h2>Relatório / Cultura </h2>
+               
+                <div class="clearfix"></div>
+              </div>
+              <div class="x_content">
+                <canvas id="grafico_cultura_user"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-12 col-sm-12  ">
+            <div class="x_panel">
+              <div class="x_title">
+                <h2>Relatório / Cultura </h2>
+               
+                <div class="clearfix"></div>
+              </div>
+              <div class="x_content">
+                <canvas id="grafico_solo_user"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+        <form id="formProdutor">
+          <div class="row" style="text-align: center;">
+
+            <div class="col-md-6 col-sm-12 ">
+              <div class="mb-3">
+                <b><label for="cpfCnpj" class="form-label">CPF ou CNPJ</label><br></b>
+                <span>{{produtor.cpfcnpj}}</span>
+              </div>
+            </div>
+
+            <div class="col-md-6 col-sm-12 ">
+              <div class="mb-3">
+                <b><label for="nomeProdutor" class="form-label">Nome do Produtor</label></b><br>
+                <span>{{produtor.produtor}}</span>
+              </div>
+            </div>
+
+        
+            <div class="col-md-12 col-sm-12 ">
+              <div class="card" style="text-align: center;">
+                <div class="card-header">
+                  FAZENDAS
+                </div>
+                <div class="card-body">
+                  <div class="x_content">
+            
+                    <ul class="nav nav-tabs bar_tabs" id="myTab" role="tablist">
+                      {% for fazenda in fazendas %}
+                      <li class="nav-item">
+                        <a class="nav-link" id="home-tab" data-toggle="tab" href="#a{{fazenda.id}}" role="tab" aria-controls="home" aria-selected="true">{{fazenda.fazenda}}</a>
+                      </li>
+                      {% endfor %}
+                    </ul>
+            
+                    <div class="tab-content" id="myTabContent">
+                      {% for fazenda in fazendas %}
+                      <div class="tab-pane fade show" id="a{{fazenda.id}}" role="tabpanel" aria-labelledby="home-tab">
+                        <div class="col-md-3 col-sm-6 form-group has-feedback">
+                          <b><label for="cpfCnpj" class="form-label">Nome da Fazenda</label></b><br>
+                          <span>{{fazenda.fazenda}}</span>
+                      </div>
+                      <div class="col-md-3 col-sm-6 form-group has-feedback">
+                        <b><label for="cpfCnpj" class="form-label">Nome da Fazenda</label></b><br>
+                        <span>{{fazenda.area_total}}</span>
+                          
+                      </div>
+
+                      <div class="col-md-3 col-sm-6 form-group has-feedback">
+                        <b><label for="cpfCnpj" class="form-label">Nome da Fazenda</label></b><br>
+                        <span>{{fazenda.area_agricultavel}}</span>
+                        
+                      </div>
+
+                      <div class="col-md-3 col-sm-6 form-group has-feedback">
+                        <b><label for="cpfCnpj" class="form-label">Nome da Fazenda</label></b><br>
+                        <span>{{fazenda.area_vegetacao}}</span>
+                      </div>
+                        <ul>
+                        
+                            <table class="table table-striped jambo_table bulk_action" style="text-align: center;">
+                              <thead>
+                                <tr class="headings">
+                                  <th class="column-title">Culturas Plantadas </th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {% for cultura in culturas %}
+                                {% if cultura.fazenda.id == fazenda.id %}
+                                <tr class="even pointer">
+                                  <td class=" ">{{cultura.cultura}}</td>
+                                </tr>
+                                {% endif %}
+                                {% endfor %}
+                              </tbody>
+                            </table>
+                           
+                        </ul>
+                      </div>
+                      {% endfor %}
+                    </div>
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+
+      </div>
+    </div>
+     
+    </form>
+    </div>
+  </div>
+
+  <script>
+
+    var estadosData = {
+        labels: {{ estados|safe }},
+        totais: {{ total_fazendas_estado|safe }}
+    };
+
+    var culturasData = {
+        labels: {{ culturas_labels|safe }},
+        totais: {{ total_culturas|safe }}
+    };
+
+    var usoSoloData = {
+        labels: {{ uso_solo_labels|safe }},
+        totais: {{ uso_solo_data|safe }}
+    };
+
+    // Inicializando os gráficos com os dados do produtor
+    init_charts(estadosData, culturasData, usoSoloData);
+
+</script>

@@ -1,0 +1,296 @@
+{% extends 'menu.html' %}
+{% load static %}
+
+
+{% block content %}
+<div class="right_col" role="main">
+
+    <div class="row mb-3" >
+        <div class="col-md-6 col-sm-12 ">
+        <div class="card" style="text-align: center;">
+            <div class="card-header">
+              FAZENDAS CADASTRADAS
+            </div>
+            <div class="card-body">
+            <b><span style="font-size: 30px">{{total_fazendas}}</span></b>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-sm-12 ">
+            <div class="card" style="text-align: center;">
+                <div class="card-header">
+                  HECTARES (ÁREA TOTAL)
+                </div>
+                <div class="card-body">
+                <b><span style="font-size: 30px">{{total_area}}</span></b>
+                </div>
+              </div>
+            </div>
+  
+    </div>
+
+    
+    <div class="row mb-3">
+      <div class="col-md-4 col-sm-12 "></div>
+      <div class="col-md-4 col-sm-12 "></div>
+      <div class="col-md-4 col-sm-12 ">
+        <button style="width: 100%;" type="button"  data-toggle="modal" data-target=".bs-example-modal-lg" class="btn btn-dark"><i class="fa fa-male"></i> Cadastrar Produtor</button>
+      </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 col-sm-12  ">
+          <div class="x_panel">
+            <div class="x_title">
+              <h2>Relatório / Estado </h2>
+             
+              <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+              <canvas id="grafico_estado"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4 col-sm-12  ">
+            <div class="x_panel">
+              <div class="x_title">
+                <h2>Relatório / Cultura</h2>
+               
+                <div class="clearfix"></div>
+              </div>
+              <div class="x_content">
+                <canvas id="grafico_cultura"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-4 col-sm-12  ">
+            <div class="x_panel">
+              <div class="x_title">
+                <h2>Relatório / Uso do Solo</h2>
+               
+                <div class="clearfix"></div>
+              </div>
+              <div class="x_content">
+                <canvas id="grafico_uso_solo"></canvas>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-md-12 col-sm-12  ">
+            <div class="x_panel">
+              <div class="x_title">
+                <h2>Produtores Cadastrados</h2>
+               
+                <div class="clearfix"></div>
+              </div>
+              <div class="x_content">
+                <div  class="mb-5 mt-5">
+                  <div class="card">
+                     <div class="card-body">
+                      <table id="example"  class="table table-striped table-bordered nowrap" style="width:100%;">
+                        <thead>
+                            <tr style="text-align: left;">
+                                <th>CPF/CNPJ</th>
+                                <th>Produtor</th>
+                                <th>Fazendas</th>
+                                <th>Área Total</th>
+                                <th>Área Total Agricultável</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for produtor in produtores_com_fazendas %}
+                            <tr data-id="{{ produtor.id }}">
+                                <td>{{ produtor.cpfcnpj }}</td>
+                                <td>{{ produtor.produtor }}</td>
+                                <td>{{ produtor.quantidade_fazendas }}</td>
+                                <td>{{ produtor.area_total }}</td>
+                                <td>{{ produtor.area_agricultavel }}</td>
+                                <td style="text-align: center;"><a onclick="showModalView('{{ produtor.id }}')"><i class="fa fa-eye" style="font-size: 20px; margin-right: 10px; color: #000000; cursor: pointer;"></i></a><a href="/editar/{{ produtor.id }}"><i style="font-size: 20px; margin-right: 10px;color: #008c96; cursor: pointer;" class="fa fa-edit"></i></a><a onclick="deleteProdutor('{{ produtor.id }}')"><i style="font-size: 20px; margin-right: 10px; color: #d30015; cursor: pointer;"  class="fa fa-trash"></i></a> </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                     </div>
+                     <div class="card-arrow">
+                        <div class="card-arrow-top-left"></div>
+                        <div class="card-arrow-top-right"></div>
+                        <div class="card-arrow-bottom-left"></div>
+                        <div class="card-arrow-bottom-right"></div>
+                     </div>
+                  
+                  </div>
+               </div>
+              </div>
+            </div>
+          </div>
+ 
+      </div>
+
+ 
+  </div>
+
+  <div class="modal fade" id="modalView" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+    
+  </div>
+
+  <div class="modal fade bs-example-modal-lg" id="modalCad" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h4 class="modal-title" id="myModalLabel">Cadastrar Produtor</h4>
+          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="formProdutor">
+            <div class="row">
+
+              <div class="col-md-4 col-sm-12 ">
+                <div class="mb-3">
+                  <label for="cpfCnpj" class="form-label">CPF ou CNPJ</label>
+                  <input type="text" class="form-control" id="cpfCnpj" placeholder="Digite o CPF ou CNPJ" required>
+                  <div class="invalid-feedback">
+                    CPF ou CNPJ inválido.
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-8 col-sm-12 ">
+                <div class="mb-3">
+                  <label for="nomeProdutor" class="form-label">Nome do Produtor</label>
+                  <input type="text" class="form-control" id="nomeProdutor" placeholder="Digite o nome do produtor" required>
+                </div>
+              </div>
+
+              <div class="col-md-12 col-sm-12 ">
+                <div class="mb-3">
+                  <label for="nomeFazenda" class="form-label">Nome da Fazenda</label>
+                  <input type="text" class="form-control" id="nomeFazenda" placeholder="Digite o nome da fazenda" required>
+                </div>
+              </div>
+
+
+            <div class="col-md-6 col-sm-12 ">
+                <div class="mb-3">
+                  <label for="estado" class="form-label">Estado</label>
+                  <select style="width: 100%;" class="form-control select2-modalcad" id="estado" name="estado" required>
+                    <option value="AC">Acre</option>
+                      <option value="AL">Alagoas</option>
+                      <option value="AP">Amapá</option>
+                      <option value="AM">Amazonas</option>
+                      <option value="BA">Bahia</option>
+                      <option value="CE">Ceará</option>
+                      <option value="DF">Distrito Federal</option>
+                      <option value="ES">Espírito Santo</option>
+                      <option value="GO">Goiás</option>
+                      <option value="MA">Maranhão</option>
+                      <option value="MT">Mato Grosso</option>
+                      <option value="MS">Mato Grosso do Sul</option>
+                      <option value="MG">Minas Gerais</option>
+                      <option value="PA">Pará</option>
+                      <option value="PB">Paraíba</option>
+                      <option value="PR">Paraná</option>
+                      <option value="PE">Pernambuco</option>
+                      <option value="PI">Piauí</option>
+                      <option value="RJ">Rio de Janeiro</option>
+                      <option value="RN">Rio Grande do Norte</option>
+                      <option value="RS">Rio Grande do Sul</option>
+                      <option value="RO">Rondônia</option>
+                      <option value="RR">Roraima</option>
+                      <option value="SC">Santa Catarina</option>
+                      <option value="SP">São Paulo</option>
+                      <option value="SE">Sergipe</option>
+                      <option value="TO">Tocantins</option>
+                    <!-- Adicionar outros estados conforme necessário -->
+                  </select>
+                </div>
+            </div>    
+
+            <div class="col-md-6 col-sm-12 ">
+              <div class="mb-3">
+                <label for="cidade" class="form-label">Cidade</label>
+                <select style="width: 100%;" class="form-control select2-modalcad" id="cidade" name="cidade" required>
+                  <option selected disabled>Escolha a cidade</option>
+                  <!-- Adicionar outros estados conforme necessário -->
+                </select>
+              </div>
+            </div>
+            
+            <div class="col-md-4 col-sm-12 ">
+              <div class="mb-3">
+                <label for="areaTotal" class="form-label">Área total (hectares)</label>
+                <input type="number" class="form-control" id="areaTotal" placeholder="Área total da fazenda" required>
+              </div>
+            </div>
+
+            <div class="col-md-4 col-sm-12 ">
+              <div class="mb-3">
+                <label for="areaAgricultavel" class="form-label">Área agricultável (hectares)</label>
+                <input type="number" class="form-control" id="areaAgricultavel" placeholder="área agricultável" oninput="validarAreas()" required>
+              </div>
+            </div>
+
+            <div class="col-md-4 col-sm-12 ">
+              <div class="mb-3">
+                <label for="areaVegetacao" class="form-label">Área de vegetação (hectares)</label>
+                <input type="number" class="form-control" id="areaVegetacao" placeholder="Área de vegetação" oninput="validarAreas()" required>
+              </div>
+            </div>
+
+            <div class="col-md-12 col-sm-12 ">
+              <div class="mb-3">
+                <label for="culturas" class="form-label">Culturas plantadas</label>
+                <select required style="width: 100%;" class="form-control select2-modalcad" name="culturas[]" multiple="multiple" id="culturas">
+                  <option  value="Soja">Soja</option>
+                  <option  value="Milho">Milho</option>
+                  <option value="Algodão">Algodão</option>
+                  <option value="Café">Café</option>
+                  <option value="Cana">Cana de Açúcar</option>
+                </select>
+              </div>
+            </div>
+
+            
+          
+        </div>
+      </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+          <button type="button" onclick="cadProdutor()" class="btn btn-primary">Cadastrar</button>
+        </div>
+      </form>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="{% static 'vendors/Chart.js/dist/Chart.min.js' %}"></script>
+  <script src="{% static 'src/scripts/formCadastro.js' %}"></script>
+  
+<script>
+
+  var estadosData = {
+        labels: {{ estados|safe }},
+        totais: {{ total_fazendas_estado|safe }}
+    };
+
+    var culturasData = {
+        labels: {{ culturas_labels|safe }},
+        totais: {{ total_culturas|safe }}
+    };
+
+    var usoSoloData = {
+        labels: {{ uso_solo_labels|safe }},
+        totais: {{ uso_solo_data|safe }}
+    };
+
+    // Inicializando os gráficos com os dados do Django
+    init_charts(estadosData, culturasData, usoSoloData);
+</script>
+
+
+
+{% endblock %}

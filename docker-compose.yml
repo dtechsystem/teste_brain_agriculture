@@ -1,0 +1,26 @@
+version: '3.9'
+
+services:
+  brainag:
+    container_name: brainag
+    build:
+      context: .
+    ports:
+      - 8000:8000
+    volumes:
+      - ./brainag:/brainag
+      - ./data/web/static:/data/web/static/
+      - ./data/web/media:/data/web/media/
+    env_file:
+      - ./dotenv_files/.env
+    depends_on:
+      - psql
+    user: "${UID}:${GID}"
+    
+  psql:
+    container_name: psql
+    image: postgres:13-alpine
+    volumes:
+      - ./data/postgres/data:/var/lib/postgresql/data/
+    env_file:
+      - ./dotenv_files/.env
